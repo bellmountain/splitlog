@@ -1,14 +1,14 @@
 {
-  "name": "terminal",
-  "version": "1.0.0",
-  "description": "",
+  "name": "split-logger",
+  "version": "0.0.1",
+  "description": "split the terminal to display multiple logs",
   "main": "index.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1", 
     "dev": "node --watch-path=./src index.js"
   },
-  "author": "",
+  "author": "bellmountain",
   "license": "ISC",
   "dependencies": {
     "ansi-escapes": "^6.2.0",

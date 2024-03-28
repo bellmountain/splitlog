@@ -28,19 +28,22 @@ function createBoundedQueue(maxSize) {
     printQueue() {
       return items.join("\n");
     },
-    get(amount, width) {
+    get(amount, width, scrollState) {
       let text = "";
       let i = 0;
 
       while (i < amount) {
-        if (items[items.length - 1 - i]) {
-          const length = items[items.length - 1 - i].length,
+        if (items[items.length - 1 - i - scrollState]) {
+          const length = items[items.length - 1 - i - scrollState].length,
             k = i;
 
           //insert long lines in reverse order
           for (let j = Math.floor(length / width); j >= 0; j--) {
             text =
-              items[items.length - 1 - k].substr(j * (width - 1), width - 1) +
+              items[items.length - 1 - k - scrollState].substr(
+                j * (width - 1),
+                width - 1,
+              ) +
               "\n" +
               text;
 

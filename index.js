@@ -12,6 +12,7 @@ let loggers = makeLogger(
   },
   {
     split: true,
+    maxEntries: 800,
   },
 );
 setInterval(() => {
@@ -21,17 +22,21 @@ setInterval(() => {
 
 setInterval(() => {
   // console.log("asdf");
-  loggers[1].log("piu");
+  // loggers[1].log("piu");
 }, 890);
 let i = 0;
 
 setInterval(() => {
   i++;
   loggers[0].log(i + " log");
-  loggers[1].log('testing "' + i + '"');
+  // loggers[1].log('testing "' + i + '"');
 }, 1000);
 
 setInterval(() => {
   // loggers[0].log("i1.-njlii".repeat(12));
-  loggers[1].log("this is a: " + "verylong text ".repeat(58));
+  // loggers[1].log("this is a: " + "verylong text ".repeat(58));
 }, 2400);
+
+for (let i = 0; i < 100; i++) {
+  loggers[1].log(i + "this is a: " + "verylong text ".repeat(8));
+}

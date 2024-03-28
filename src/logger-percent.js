@@ -18,22 +18,26 @@ function cursorToBottom(col = 0) {
   return cursorTo(col, process.stdout.rows - 1);
 }
 
-function makeLogger(rows, callback = () => {}, opts = { split: true }) {
+function makeLogger(
+  rows,
+  callback = () => {},
+  opts = { split: true, maxEntries: 800 },
+) {
   const rl = readline.createInterface({
     input,
     output,
   });
 
   const rowsSize = rows.reduce((a, b) => a + b.height, 0);
-
   if (rowsSize > 100) throw "Too many rows";
 
   let loggers = [];
+  let index = 0;
+  let scrollState = 0;
 
-  let index = 2;
   for (const row of rows) {
     row.index = index;
-    row.queue = createBoundedQueue(80);
+    row.queue = createBoundedQueue(opts.maxEntries);
     row.render = () => {
       const round = row.index % 2 === 0 ? Math.floor : Math.ceil;
       let size = round(
@@ -43,7 +47,7 @@ function makeLogger(rows, callback = () => {}, opts = { split: true }) {
       );
       // throw size;
 
-      return row.queue.get(size, process.stdout.columns - 1);
+      return row.queue.get(size, process.stdout.columns - 1, scrollState);
     };
 
     index++;
@@ -67,10 +71,12 @@ function makeLogger(rows, callback = () => {}, opts = { split: true }) {
         text += "-".repeat(process.stdout.columns - 1) + "\n";
       }
     }
+
     // for (let i = rowsSize; i < process.stdout.rows - 3; i++) {
     //   text += i + ".".repeat(process.stdout.columns - 2) + "\n";
     // }
 
+    // TODO fix cursor position not showing correctly
     text +=
       "rl.line: " +
       rl.line +
@@ -80,15 +86,26 @@ function makeLogger(rows, callback = () => {}, opts = { split: true }) {
 
     process.stdout.write(text);
   }
-  // process.stdin.on("keypress", (character, keyInfo) => {
-  //   loggers.forEach((logger) => {
-  //     logger.log(character, keyInfo);
-  //   });
-  // });
+  //
+  process.stdin.on("keypress", (character, keyInfo) => {
+    loggers[0].log(character);
+    loggers[0].log(keyInfo.name ? keyInfo.name : "");
+    // loggers[1].log(keyInfo.entries ? keyInfo.entries().toString() : "");
 
-  process.stdin.on("keypress", render);
+    if (keyInfo.name === "pageup") {
+      if (scrollState > 0) scrollState--;
+    }
+    if (keyInfo.name === "pagedown") {
+      if (scrollState < opts.maxEntries) scrollState++;
+    }
+    render();
+    // if (keyInfo.name === "pageup") loggers[0].log("page up");
+    // if (keyInfo.name === "pagedown") loggers[0].log("page down");
+  });
+
   process.stdout.on("resize", render);
   // setInterval(render, 500);
+  // process.stdin.on("keypress", render);
 
   rl.on("line", (line) => callback(line, loggers));
 
