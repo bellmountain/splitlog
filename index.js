@@ -1,9 +1,10 @@
-import makeLogger from "./src/logger-percent.js";
+import makeLogger from "./src/logger-for-loop.js";
 
 let loggers = makeLogger(
   [
-    { height: 50, name: "statusline" },
-    { height: 50, name: "statusline2", date: true },
+    { height: 100, name: "statusline" },
+    // { height: 50, name: "statusline" },
+    // { height: 50, name: "statusline2", date: true },
     // { height: 33, name: "statusline2", date: true },
     // { height: "100%", name: "statusline2", date: true },
   ],
@@ -37,6 +38,6 @@ setInterval(() => {
   // loggers[1].log("this is a: " + "verylong text ".repeat(58));
 }, 2400);
 
-for (let i = 0; i < 100; i++) {
-  loggers[1].log(i + "this is a: " + "verylong text ".repeat(8));
+for (let i = 0; i < 300; i++) {
+  loggers[1].log(i + "this is a: " + "verylong text ".repeat(18));
 }
